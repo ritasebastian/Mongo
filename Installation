@@ -1,0 +1,25 @@
+https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-amazon/
+https://docs.aws.amazon.com/dms/latest/sbs/chap-mongodb2documentdb.02.html
+
+Install mongodb 7
+sudo vi /etc/yum.repos.d/mongodb-org-7.0.repo
+sudo yum install -y mongodb-org
+# sudo yum install -y mongodb-org-7.0.5 mongodb-org-database-7.0.5 mongodb-org-server-7.0.5 mongodb-mongosh-7.0.5 mongodb-org-mongos-7.0.5 mongodb-org-tools-7.0.5
+sudo systemctl start mongod
+sudo systemctl enable mongod
+sudo systemctl status mongod
+its data files in /var/lib/mongo
+its log files in /var/log/mongodb
+Start a mongosh session on the same host machine as the mongod. You can run mongosh without any command-line options to connect to a mongod that is running on your localhost with default port 27017.
+
+Uninstall MongoDB
+Stop MongoDB.
+Stop the mongod process by issuing the following command:
+sudo service mongod stop
+Remove Packages.
+Remove any MongoDB packages that you had previously installed.
+sudo yum erase $(sudo rpm -qa | grep mongodb-org)
+Remove Data Directories.
+Remove MongoDB databases and log files.
+sudo rm -r /var/log/mongodb
+sudo rm -r /var/lib/mongo
