@@ -44,25 +44,47 @@ Replace public-dns-name with the actual public DNS name for your instance, for e
 # sudo service mongod restart
 
 NEW_IP=$(hostname -I | awk '{print $1}')
-sudo sed -i "s/^bindIp: .*/bindIp: $NEW_IP/" /etc/mongod.conf
+sudo sed -i "s/27.0.0.1/$NEW_IP/" /etc/mongod.conf
 sudo systemctl restart mongod
 sudo systemctl status mongod
 
-On Node 1(db1)
+Create Key on node1
 sudo mkdir -p /etc/mongodb/keys/
 openssl rand -base64 756 | sudo tee /etc/mongodb/keys/mongo-key > /dev/null
 sudo chmod 400 /etc/mongodb/keys/mongo-key
 sudo chown -R mongod:mongod /etc/mongodb
+echo -e "security:\n  authorization: enabled\n  keyFile: /etc/mongodb/keys/mongo-key\n " | sudo tee -a /etc/mongod.conf
+sudo systemctl restart mongod
+sudo systemctl status mongod
 
 sudo scp -i "2004test.pem" /etc/mongodb/keys/mongo-key ec2-user@db2:/tmp
 sudo scp -i "2004test.pem" /etc/mongodb/keys/mongo-key ec2-user@db3:/tmp
 
 Each noed(s) run below 
 sudo mkdir -p /etc/mongodb/keys/
-sudo /tmp/mongo-key
+sudo cp /tmp/mongo-key /etc/mongodb/keys/
 sudo chmod 400 /etc/mongodb/keys/mongo-key
 sudo chown -R mongod:mongod /etc/mongodb
+echo -e "security:\n  authorization: enabled\n  keyFile: /etc/mongodb/keys/mongo-key\n  " | sudo tee -a /etc/mongod.conf
 
+sudo systemctl restart mongod
+sudo systemctl status mongod
+
+Add replicat On Node 1(db1)
+
+vi /etc/mongod.conf
+
+security:
+ authorization: enabled
+ keyFile:  /etc/mongodb/keys/mongo-key
+replication:
+  replSetName: "replicaset-01"
+
+echo -e "replSetName: \"replicaset-01\"" | sudo tee -a /etc/mongod.conf
+
+sudo systemctl stop mongod
+sudo systemctl start mongod
+sudo systemctl status mongod
 
 
 
