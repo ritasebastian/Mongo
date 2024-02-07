@@ -1,7 +1,8 @@
+Reference URL's
 https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-amazon/
 https://docs.aws.amazon.com/dms/latest/sbs/chap-mongodb2documentdb.02.html
 
-Install mongodb 6
+Install mongodb 6 amazon 2 Ec2
 cat <<EOF | sudo tee /etc/yum.repos.d/mongodb-org-6.0.repo
 [mongodb-org-6.0]
 name=MongoDB Repository
