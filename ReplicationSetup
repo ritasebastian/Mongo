@@ -26,7 +26,7 @@ systemLog:
     path: "/var/log/mongodb/mongod.log"
     logAppend: true
 processManagement:
-    fork: true
+    fork: false
 storage:
     dbPath: "/var/lib/mongo"
 net:
@@ -87,19 +87,24 @@ EOF
 Create Key on node1
 sudo mkdir -p /etc/mongodb/keys/
 openssl rand -base64 756 | sudo tee /etc/mongodb/keys/mongo-key > /dev/null
+sudo cp /etc/mongodb/keys/mongo-key /tmp
+sudo chmod 777 /tmp/mongo-key
+scp /tmp/mongo-key db2:/tmp
+scp /tmp/mongo-key db3:/tmp
 sudo chmod 400 /etc/mongodb/keys/mongo-key
 sudo chown -R mongod:mongod /etc/mongodb
 echo -e "security:\n  authorization: enabled\n  keyFile: /etc/mongodb/keys/mongo-key\n " | sudo tee -a /etc/mongod.conf
-sudo scp -i "2004test.pem" /etc/mongodb/keys/mongo-key ec2-user@db2:/tmp
-sudo scp -i "2004test.pem" /etc/mongodb/keys/mongo-key ec2-user@db3:/tmp
+
 
 Each noed(s) run below Copy the keyfile to other 2 nodes
+echo -e "security:\n  authorization: enabled\n  keyFile: /etc/mongodb/keys/mongo-key\n " | sudo tee -a /etc/mongod.conf
 sudo mkdir -p /etc/mongodb/keys/
 sudo cp /tmp/mongo-key /etc/mongodb/keys/
 sudo chmod 400 /etc/mongodb/keys/mongo-key
 sudo chown -R mongod:mongod /etc/mongodb
 
 sudo systemctl stop mongod
+sudo systemctl start mongod
 sudo systemctl status mongod
 
 
