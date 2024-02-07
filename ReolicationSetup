@@ -1,4 +1,4 @@
-Install mongodb 6 amazon 2 Ec2
+Install mongodb 6 amazon 2 EC2
 sudo yum update -y
 cat <<EOF | sudo tee /etc/yum.repos.d/mongodb-org-6.0.repo
 [mongodb-org-6.0]
@@ -13,12 +13,8 @@ sudo yum install -y mongodb-org
 sudo systemctl enable mongod
 sudo systemctl start mongod
 sudo systemctl status mongod
-its data files in /var/lib/mongo
-its log files in /var/log/mongodb
+Data files in /var/lib/mongo Log files in /var/log/mongodb
 Start a mongosh session on the same host machine as the mongod. You can run mongosh without any command-line options to connect to a mongod that is running on your localhost with default port 27017.
-mongosh
-Get you local IP's
-hostname -I
 
 sudo cat << EOF > /etc/mongodb.conf
 replication :    
@@ -41,9 +37,13 @@ sudo systemctl stop mongod
 sudo systemctl start mongod
 sudo systemctl status mongod
 
+mongosh --quiet admin --eval "db.createUser({user: 'admin_user', pwd: 'admin_password', roles: [{role: 'userAdminAnyDatabase', db: 'admin'}, {role: 'dbOwner', db: 'admin'}, {role: 'clusterAdmin', db: 'admin'}]})"
 
-NEW_IP=$(hostname -I | awk '{print $1}')
-sudo sed -i "s/27.0.0.1/$NEW_IP/" /etc/mongod.conf
+echo 'mongosh --quiet -u admin_user -p admin_password --authenticationDatabase=admin' > login.sh
+chmod +x login.sh
+./login.sh
+
+
 
 Update the /etc/hosts files collect the IP's update 
 
@@ -98,6 +98,7 @@ sudo chown -R mongod:mongod /etc/mongodb
 
 sudo systemctl restart mongod
 sudo systemctl status mongod
+
 
 
 
