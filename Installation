@@ -1,16 +1,50 @@
 https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-amazon/
 https://docs.aws.amazon.com/dms/latest/sbs/chap-mongodb2documentdb.02.html
 
-Install mongodb 7
-sudo vi /etc/yum.repos.d/mongodb-org-7.0.repo
+Install mongodb 6
+cat <<EOF | sudo tee /etc/yum.repos.d/mongodb-org-6.0.repo
+[mongodb-org-6.0]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/amazon/2/mongodb-org/6.0/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://pgp.mongodb.com/server-6.0.asc
+EOF
+
 sudo yum install -y mongodb-org
-# sudo yum install -y mongodb-org-7.0.5 mongodb-org-database-7.0.5 mongodb-org-server-7.0.5 mongodb-mongosh-7.0.5 mongodb-org-mongos-7.0.5 mongodb-org-tools-7.0.5
-sudo systemctl start mongod
 sudo systemctl enable mongod
+sudo systemctl start mongod
 sudo systemctl status mongod
 its data files in /var/lib/mongo
 its log files in /var/log/mongodb
 Start a mongosh session on the same host machine as the mongod. You can run mongosh without any command-line options to connect to a mongod that is running on your localhost with default port 27017.
+mongosh
+
+sudo vi /etc/mongod.conf
+bindIp: public-dns-name
+Replace public-dns-name with the actual public DNS name for your instance, for example ec2-11-22-33-44.us-west-2.compute.amazonaws.com. Example bindIp: 172.31.88.212 ( internal Ip)
+sudo service mongod restart
+
+Populate your MongoDB instance with data by doing the following: Use the wget command to download a JSON file containing sample data.
+
+wget http://media.mongodb.org/zips.json
+Use the mongoimport command to import the data into a new database (zips-db).
+mongoimport --host 172.31.88.212:27017 --db zips-db --file zips.json
+After the import completes, use the mongo shell to connect to MongoDB and verify that the data was loaded successfully.
+mongosh --host 172.31.88.212:27017
+Replace public-dns-name with the actual public DNS name for your instance.
+At the mongo shell prompt, enter the following commands.
+
+use zips-db
+
+--db.zips.count()
+db.zips.countDocuments()
+
+
+db.zips.aggregate( [
+   { $group: { _id: { state: "$state", city: "$city" }, pop: { $sum: "$pop" } } },
+   { $group: { _id: "$_id.state", avgCityPop: { $avg: "$pop" } } }
+] )
 
 Uninstall MongoDB
 Stop MongoDB.
@@ -23,3 +57,4 @@ Remove Data Directories.
 Remove MongoDB databases and log files.
 sudo rm -r /var/log/mongodb
 sudo rm -r /var/lib/mongo
+sudo rim -r /etc/yum.repos.d/mongodb-org-7.0.repo
