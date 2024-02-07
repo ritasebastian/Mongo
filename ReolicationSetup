@@ -19,7 +19,13 @@ Start a mongosh session on the same host machine as the mongod. You can run mong
 mongosh
 Get you local IP's
 hostname -I
+
+NEW_IP=$(hostname -I | awk '{print $1}')
+sudo sed -i "s/27.0.0.1/$NEW_IP/" /etc/mongod.conf
+
 Update the /etc/hosts files collect the IP's update 
+
+
 sudo vi /etc/hosts
 cat /etc/hosts
 
@@ -80,11 +86,16 @@ security:
 replication:
   replSetName: "replicaset-01"
 
-echo -e "replSetName: \"replicaset-01\"" | sudo tee -a /etc/mongod.conf
+echo -e "\nreplication:\n  replSetName: \"replicaset-01\"\n" | sudo tee -a /etc/mongod.conf
+rs.initiate()
+rs.add(“db2:27017”)
+rs.add(“db3:27017”)
 
 sudo systemctl stop mongod
 sudo systemctl start mongod
 sudo systemctl status mongod
+
+https://hevodata.com/learn/mongodb-replica-set-config/
 
 
 
