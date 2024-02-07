@@ -99,6 +99,14 @@ sudo systemctl restart mongod
 sudo systemctl status mongod
 
 
+# Check the status of the replica set
+rs.status()
+
+# check oplog size and time range
+rs.printReplicationInfo()
+
+# check replica set members and replication lag
+rs.printSecondaryReplicationInfo()
 
 
 # sudo vi /etc/mongod.conf
