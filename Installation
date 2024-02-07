@@ -58,4 +58,4 @@ Remove Data Directories.
 Remove MongoDB databases and log files.
 sudo rm -r /var/log/mongodb
 sudo rm -r /var/lib/mongo
-sudo rim -r /etc/yum.repos.d/mongodb-org-7.0.repo
+sudo rim -r /etc/yum.repos.d/mongodb-org-6.0.repo
