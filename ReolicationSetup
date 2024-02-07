@@ -20,6 +20,28 @@ mongosh
 Get you local IP's
 hostname -I
 
+sudo cat << EOF > /etc/mongodb.conf
+replication :    
+    oplogSizeMB : 256
+    replSetName : "rs"
+systemLog :
+   destination : file
+   path : "/var/log/mongodb/logs/mdb.log"
+   logAppend : true
+processManagement:
+   fork : true
+storage :
+    dbPath : "/var/lib/mongo/mongodb/data"
+net :
+    port : 27017
+    bindIp : 0.0.0.0
+EOF
+
+sudo systemctl stop mongod
+sudo systemctl start mongod
+sudo systemctl status mongod
+
+
 NEW_IP=$(hostname -I | awk '{print $1}')
 sudo sed -i "s/27.0.0.1/$NEW_IP/" /etc/mongod.conf
 
@@ -43,6 +65,41 @@ Host *
   IdentityFile "/home/ec2-user/2004test.pem"
   User ec2-user
   Port 22
+
+The following commands are executed on one machine only
+
+mongosh <<EOF
+use admin
+rs.initiate({
+  "_id": "rs",
+  "members": [
+    {"_id": 1, "host": "db1:27017", "priority": 5},
+    {"_id": 2, "host": "db2:27017", "priority": 4},
+    {"_id": 3, "host": "db3:27017", "priority": 3}
+  ]
+})
+EOF
+
+mongosh --quiet admin --eval "db.createUser({user: 'admin_user', pwd: 'admin_password', roles: [{role: 'userAdminAnyDatabase', db: 'admin'}, {role: 'dbOwner', db: 'admin'}, {role: 'clusterAdmin', db: 'admin'}]})"
+
+sudo mkdir -p /etc/mongodb/keys/
+openssl rand -base64 756 | sudo tee /etc/mongodb/keys/mongo-key > /dev/null
+sudo chmod 400 /etc/mongodb/keys/mongo-key
+sudo chown -R mongod:mongod /etc/mongodb
+echo -e "security:\n  authorization: enabled\n  keyFile: /etc/mongodb/keys/mongo-key\n " | sudo tee -a /etc/mongod.conf
+sudo scp -i "2004test.pem" /etc/mongodb/keys/mongo-key ec2-user@db2:/tmp
+sudo scp -i "2004test.pem" /etc/mongodb/keys/mongo-key ec2-user@db3:/tmp
+
+Each noed(s) run below Copy the keyfile to other 2 nodes
+sudo mkdir -p /etc/mongodb/keys/
+sudo cp /tmp/mongo-key /etc/mongodb/keys/
+sudo chmod 400 /etc/mongodb/keys/mongo-key
+sudo chown -R mongod:mongod /etc/mongodb
+
+sudo systemctl restart mongod
+sudo systemctl status mongod
+
+
 
 # sudo vi /etc/mongod.conf
 # bindIp: public-dns-name
