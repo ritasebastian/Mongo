@@ -61,13 +61,12 @@ Sample format
 
 Trusted connect all 3 hosts "Not needed by easy to copy the file(s)
 scp -i "2004test.pem" 2004test.pem ec2-user@ec2-54-87-232-135.compute-1.amazonaws.com:/home/ec2-user/
-touch ~/.ssh/config
-chmod 600 ~/.ssh/config
-cat ~/.ssh/config
-Host *
+echo 'Host *
   IdentityFile "/home/ec2-user/2004test.pem"
   User ec2-user
-  Port 22
+  Port 22' >> ~/.ssh/config
+chmod 600 ~/.ssh/config
+
 
 The following commands are executed on one machine only
 
