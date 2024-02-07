@@ -46,8 +46,7 @@ chmod +x login.sh
 
 
 Update the /etc/hosts files collect the IP's update 
-
-
+hostname -I 
 sudo vi /etc/hosts
 cat /etc/hosts
 
