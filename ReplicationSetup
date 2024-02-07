@@ -113,6 +113,29 @@ rs.printReplicationInfo()
 # check replica set members and replication lag
 rs.printSecondaryReplicationInfo()
 
+DataLoad
+wget http://media.mongodb.org/zips.json
+Use the mongoimport command to import the data into a new database (zips-db).
+mongoimport --host localhost:27017 --db zips-db --file zips.json
+After the import completes, use the mongo shell to connect to MongoDB and verify that the data was loaded successfully.
+mongosh --host 172.31.88.212:27017
+Replace public-dns-name with the actual public DNS name for your instance.
+At the mongo shell prompt, enter the following commands.
+
+use zips-db
+
+--db.zips.count()
+db.zips.countDocuments()
+
+
+db.zips.aggregate( [
+   { $group: { _id: { state: "$state", city: "$city" }, pop: { $sum: "$pop" } } },
+   { $group: { _id: "$_id.state", avgCityPop: { $avg: "$pop" } } }
+] )
+
+
+
+###############################################
 
 # sudo vi /etc/mongod.conf
 # bindIp: public-dns-name
