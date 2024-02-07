@@ -1,0 +1,73 @@
+Install mongodb 6 amazon 2 Ec2
+sudo yum update -y
+cat <<EOF | sudo tee /etc/yum.repos.d/mongodb-org-6.0.repo
+[mongodb-org-6.0]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/amazon/2/mongodb-org/6.0/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://pgp.mongodb.com/server-6.0.asc
+EOF
+
+sudo yum install -y mongodb-org
+sudo systemctl enable mongod
+sudo systemctl start mongod
+sudo systemctl status mongod
+its data files in /var/lib/mongo
+its log files in /var/log/mongodb
+Start a mongosh session on the same host machine as the mongod. You can run mongosh without any command-line options to connect to a mongod that is running on your localhost with default port 27017.
+mongosh
+Get you local IP's
+hostname -I
+Update the /etc/hosts files collect the IP's update 
+sudo vi /etc/hosts
+cat /etc/hosts
+
+Sample format
+172.31.28.137 db1
+172.31.28.25 db2
+172.31.26.204 db3
+
+Trusted connect all 3 hosts "Not needed by easy to copy the file(s)
+scp -i "2004test.pem" 2004test.pem ec2-user@ec2-54-87-232-135.compute-1.amazonaws.com:/home/ec2-user/
+touch ~/.ssh/config
+chmod 600 ~/.ssh/config
+cat ~/.ssh/config
+Host *
+  IdentityFile "/home/ec2-user/2004test.pem"
+  User ec2-user
+  Port 22
+
+# sudo vi /etc/mongod.conf
+# bindIp: public-dns-name
+Replace public-dns-name with the actual public DNS name for your instance, for example ec2-11-22-33-44.us-west-2.compute.amazonaws.com. Example bindIp: 172.31.88.212 ( internal Ip)
+# sudo service mongod restart
+
+NEW_IP=$(hostname -I | awk '{print $1}')
+sudo sed -i "s/^bindIp: .*/bindIp: $NEW_IP/" /etc/mongod.conf
+sudo systemctl restart mongod
+sudo systemctl status mongod
+
+On Node 1(db1)
+sudo mkdir -p /etc/mongodb/keys/
+openssl rand -base64 756 | sudo tee /etc/mongodb/keys/mongo-key > /dev/null
+sudo chmod 400 /etc/mongodb/keys/mongo-key
+sudo chown -R mongod:mongod /etc/mongodb
+
+sudo scp -i "2004test.pem" /etc/mongodb/keys/mongo-key ec2-user@db2:/tmp
+sudo scp -i "2004test.pem" /etc/mongodb/keys/mongo-key ec2-user@db3:/tmp
+
+Each noed(s) run below 
+sudo mkdir -p /etc/mongodb/keys/
+sudo /tmp/mongo-key
+sudo chmod 400 /etc/mongodb/keys/mongo-key
+sudo chown -R mongod:mongod /etc/mongodb
+
+
+
+
+
+
+
+
+
