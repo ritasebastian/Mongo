@@ -1,4 +1,7 @@
 
+
+---
+
 ## 💡 Short Answer:
 
 | Term            | What It Is                           | Purpose                          |
