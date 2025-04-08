@@ -1,4 +1,3 @@
----
 
 ## 💡 Short Answer:
 
