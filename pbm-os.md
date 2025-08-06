@@ -1,4 +1,4 @@
-Clean **step-by-step guide to build a working MongoDB 4.4.24 + PBM 2.3.1 backup system with PITR and scheduled backups** on **Ubuntu 20.04.6 LTS**.
+# Clean **step-by-step guide to build a working MongoDB 4.4.24 + PBM 2.3.1 backup system with PITR and scheduled backups** on **Ubuntu 20.04.6 LTS**.
 | Region     | AMI ID                  |
 | ---------- | ----------------------- |
 | us-east-1  | `ami-0fc5d935ebf8bc3bc` |
