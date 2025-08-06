@@ -46,7 +46,7 @@ sudo apt install -y mongodb-org=4.4.24 mongodb-org-server=4.4.24 \
 ### Edit MongoDB config
 
 ```bash
-sudo nano /etc/mongod.conf
+sudo vi /etc/mongod.conf
 ```
 
 Add:
