@@ -1,5 +1,4 @@
-That’s great to hear! 🎉
-Here is your complete, clean **step-by-step guide to build a working MongoDB 4.4.24 + PBM 2.3.1 backup system with PITR and scheduled backups** on **Ubuntu 20.04.6 LTS**.
+Clean **step-by-step guide to build a working MongoDB 4.4.24 + PBM 2.3.1 backup system with PITR and scheduled backups** on **Ubuntu 20.04.6 LTS**.
 
 ---
 
@@ -66,6 +65,7 @@ mongo --eval 'rs.initiate()'
 ```bash
 wget https://downloads.percona.com/downloads/percona-backup-mongodb/percona-backup-mongodb-2.3.1/binary/tarball/percona-backup-mongodb-2.3.1-x86_64.tar.gz
 tar -xzf percona-backup-mongodb-2.3.1-x86_64.tar.gz
+cd percona-backup-mongodb-2.3.1
 sudo mv pbm pbm-agent /usr/local/bin/
 sudo chmod +x /usr/local/bin/pbm /usr/local/bin/pbm-agent
 ```
@@ -78,7 +78,7 @@ sudo chmod +x /usr/local/bin/pbm /usr/local/bin/pbm-agent
 
 ```bash
 sudo mkdir -p /etc/pbm
-sudo nano /etc/pbm/pbm-config.yaml
+sudo vi /etc/pbm/pbm-config.yaml
 ```
 
 Paste:
@@ -93,6 +93,7 @@ storage:
 ### Apply config
 
 ```bash
+export PBM_MONGODB_URI="mongodb://127.0.0.1:27017"
 pbm config --mongodb-uri="mongodb://127.0.0.1:27017" --file /etc/pbm/pbm-config.yaml
 ```
 
@@ -172,6 +173,4 @@ Add:
 
 ---
 
-Let me know if you'd like the **systemd unit file** for `pbm-agent`, or if you want to **switch to S3 or other storage**.
 
-You now have a **production-grade MongoDB backup system** with both full and PITR support. 🚀
